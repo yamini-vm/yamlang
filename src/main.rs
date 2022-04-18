@@ -22,6 +22,7 @@ fn main() {
     let compiler = Compiler::new();
     let asm = compiler.compile(ast_root);
 
-    let mut asm_file = std::fs::File::create(format!("{}.yas", file_path)).unwrap();
+    let file_name = file_path.split(".").next().unwrap();
+    let mut asm_file = std::fs::File::create(format!("{}.yas", file_name)).unwrap();
     asm_file.write_all(asm.as_bytes()).unwrap();
 }
