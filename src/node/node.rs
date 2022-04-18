@@ -1,7 +1,5 @@
-pub struct Node {}
+pub trait Node {
+    fn print(&self, indent: usize);
 
-impl Node {
-    pub fn new() -> Node {
-        Node {}
-    }
+    fn compile(&self, program_str: &mut String);
 }

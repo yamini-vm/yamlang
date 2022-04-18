@@ -84,6 +84,8 @@ impl Lexer {
             }
         }
 
+        tokens.push(Token::EOF);
+
         tokens
     }
 }

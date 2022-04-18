@@ -1,4 +1,5 @@
 use std::env;
+use std::io::Write;
 
 use yamlang::lexer::Lexer;
 use yamlang::parser::Parser;
@@ -15,13 +16,12 @@ fn main() {
     let mut lexer = Lexer::new();
     let tokens = lexer.tokenize(&file_path);
 
-    for token in tokens {
-        println!("{:?}", token);
-    }
+    let mut parser = Parser::new(tokens);
+    let ast_root = parser.parse();
 
-    // let parser = Parser::new();
-    // let ast_root = parser.parse(tokens);
+    let compiler = Compiler::new();
+    let asm = compiler.compile(ast_root);
 
-    // let compiler = Compiler::new();
-    // compiler.compile(ast_root);
+    let mut asm_file = std::fs::File::create(format!("{}.yas", file_path)).unwrap();
+    asm_file.write_all(asm.as_bytes()).unwrap();
 }
