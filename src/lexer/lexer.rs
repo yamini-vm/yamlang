@@ -28,6 +28,11 @@ fn read_file_line_by_line(filepath: &str) -> Result<Vec<char>, Box<dyn std::erro
     Ok(file_chars)
 }
 
+const KEYWORDS: [&'static str; 2] = [
+    "print",
+    "var",
+];
+
 impl Lexer {
     pub fn new() -> Lexer {
         Lexer {
@@ -63,6 +68,23 @@ impl Lexer {
         number
     }
 
+    fn get_identifier_or_keyword(&mut self) -> Token {
+        let mut identifier = String::new();
+        while self.file_chars[self.current_idx].is_alphanumeric() || self.file_chars[self.current_idx] == '_' {
+            identifier.push(self.file_chars[self.current_idx]);
+            self.current_idx += 1;
+        }
+
+        let token;
+        if KEYWORDS.contains(&identifier.as_str()) {
+            token = Token::from(identifier.as_str());
+        } else {
+            token = Token::IDENTIFIER(identifier);
+        } 
+
+        token
+    }
+
     pub fn tokenize(&mut self, file_path: &str) -> Vec<Token> {
         self.file_chars = read_file_line_by_line(file_path).unwrap();
         let mut tokens = Vec::new();
@@ -79,18 +101,26 @@ impl Lexer {
                 '(' => {
                     self.current_idx += 1;
                     tokens.push(Token::LPAREN);
-                }
+                },
                 ')' => {
                     self.current_idx += 1;
                     tokens.push(Token::RPAREN);
-                }
+                },
+                '=' => {
+                    self.current_idx += 1;
+                    tokens.push(Token::ASSIGN);
+                },
                 '\"' | '\'' => {
                     self.current_idx += 1;
                     tokens.push(Token::STRING(self.get_string(self.file_chars[self.current_idx - 1])));
                 },
-                '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' => {
+                '0'..='9' => {
                     tokens.push(Token::NUM(self.get_number()))
                 },
+                'a'..='z' | 'A'..='Z' | '_' => {
+                    let token = self.get_identifier_or_keyword();
+                    tokens.push(token);
+                }
                 _ => {
                     panic!("Illegal token {}", self.file_chars[self.current_idx]);
                 }

@@ -5,6 +5,7 @@ pub(self) mod print_node;
 pub(self) mod expression_node;
 pub(self) mod string_node;
 pub(self) mod number_node;
+pub(self) mod var_node;
 
 pub use node::Node;
 pub(super) use program_node::ProgramNode;
@@ -13,3 +14,4 @@ pub(super) use print_node::PrintNode;
 pub(super) use expression_node::ExpressionNode;
 pub(super) use string_node::StringNode;
 pub(super) use number_node::NumberNode;
+pub(super) use var_node::VarNode;

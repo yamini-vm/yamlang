@@ -1,6 +1,6 @@
 use crate::node::ExpressionNode;
 use crate::token::Token;
-use crate::node::{Node, ProgramNode, StatementNode, PrintNode, StringNode, NumberNode};
+use crate::node::{Node, ProgramNode, StatementNode, PrintNode, StringNode, NumberNode, VarNode};
 
 pub struct Parser {
     tokens: Vec<Token>,
@@ -57,19 +57,36 @@ impl Parser {
     }
 
     fn statement(&mut self) -> Box<dyn StatementNode> {
-        if *self.peek() == Token::PRINT {
-            self.next(); // Skip PRINT
-            self.expect(Token::LPAREN);
+        match *self.peek() {
+            Token::PRINT => {
+                self.next(); // Skip PRINT
+                self.expect(Token::LPAREN);
 
-            let print_node = PrintNode {
-                expression: self.expression(),
-            };
-            self.next(); // Skip expression
-            self.expect(Token::RPAREN);
+                let print_node = PrintNode {
+                    expression: self.expression(),
+                };
+                self.next(); // Skip expression
+                self.expect(Token::RPAREN);
 
-            Box::new(print_node)
-        } else {
-            panic!("Unexpected token {:?}", self.peek());
+                Box::new(print_node)
+            },
+            Token::VAR => {
+                self.next(); // Skip VAR
+
+                let identifier = self.next().value();
+                self.expect(Token::ASSIGN);
+
+                let var_node = VarNode {
+                    identifier: identifier,
+                    expression: self.expression(),
+                };
+                self.next(); // Skip expression
+                
+                Box::new(var_node)
+            }
+            _ => {
+                panic!("Unexpected token {:?}", self.peek());
+            }
         }
     }
 
