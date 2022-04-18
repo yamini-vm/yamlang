@@ -1,6 +1,7 @@
 use crate::node::ExpressionNode;
 use crate::token::Token;
 use crate::node::{Node, ProgramNode, StatementNode, PrintNode, StringNode, NumberNode, VarNode};
+use crate::node::{IdentifierNode};
 
 pub struct Parser {
     tokens: Vec<Token>,
@@ -50,6 +51,12 @@ impl Parser {
                 };
                 Box::new(number_node)
             },
+            Token::IDENTIFIER(ref s) => {
+                let identifier_node = IdentifierNode {
+                    name: s.clone(),
+                };
+                Box::new(identifier_node)
+            },
             _ => {
                 panic!("Expected STRING or NUM but got {:?}", self.peek());
             }
@@ -73,7 +80,8 @@ impl Parser {
             Token::VAR => {
                 self.next(); // Skip VAR
 
-                let identifier = self.next().value();
+                let identifier = self.expression();
+                self.next(); // Skip identifier
                 self.expect(Token::ASSIGN);
 
                 let var_node = VarNode {
@@ -81,7 +89,7 @@ impl Parser {
                     expression: self.expression(),
                 };
                 self.next(); // Skip expression
-                
+
                 Box::new(var_node)
             }
             _ => {
