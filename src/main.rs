@@ -12,12 +12,16 @@ fn main() {
     }
     let file_path = &args[1];
 
-    let lexer = Lexer::new();
+    let mut lexer = Lexer::new();
     let tokens = lexer.tokenize(&file_path);
 
-    let parser = Parser::new();
-    let ast_root = parser.parse(tokens);
+    for token in tokens {
+        println!("{:?}", token);
+    }
 
-    let compiler = Compiler::new();
-    compiler.compile(ast_root);
+    // let parser = Parser::new();
+    // let ast_root = parser.parse(tokens);
+
+    // let compiler = Compiler::new();
+    // compiler.compile(ast_root);
 }

@@ -4,4 +4,4 @@ target/
 .DS_Store
 Cargo.lock
 a.out
-*.yas
+*.ym
