@@ -9,6 +9,7 @@ pub enum Token {
 
     // Literals
     STRING(String),
+    NUM(String),
 
     // Meta
     EOF,
@@ -22,6 +23,7 @@ impl PartialEq for Token {
             (Token::RPAREN, Token::RPAREN) => true,
             (Token::STRING(ref s1), Token::STRING(ref s2)) => s1 == s2,
             (Token::EOF, Token::EOF) => true,
+            (Token::NUM(ref s1), Token::NUM(ref s2)) => s1 == s2,
             _ => false,
         }
     }
@@ -35,6 +37,7 @@ impl Token {
             Token::RPAREN => ")".to_string(),
             Token::STRING(ref s) => s.clone(),
             Token::EOF => "EOF".to_string(),
+            Token::NUM(ref s) => s.clone(),
         }
     }
 }

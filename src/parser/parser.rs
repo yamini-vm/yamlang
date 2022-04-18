@@ -1,6 +1,6 @@
 use crate::node::ExpressionNode;
 use crate::token::Token;
-use crate::node::{Node, ProgramNode, StatementNode, PrintNode, StringNode};
+use crate::node::{Node, ProgramNode, StatementNode, PrintNode, StringNode, NumberNode};
 
 pub struct Parser {
     tokens: Vec<Token>,
@@ -36,24 +36,36 @@ impl Parser {
         self.next();
     }
 
-    fn expression(&mut self) -> impl ExpressionNode {
-        self.expect(Token::LPAREN);
-
-        let string_node = StringNode {
-            value: self.next().value(),
-        };
-
-        self.expect(Token::RPAREN);
-
-        string_node
+    fn expression(&mut self) -> Box<dyn ExpressionNode> {
+        match *self.peek() {
+            Token::STRING(ref s) => {
+                let string_node = StringNode {
+                    value: s.clone(),
+                };
+                Box::new(string_node)
+            },
+            Token::NUM(ref s) => {
+                let number_node = NumberNode {
+                    value: s.clone(),
+                };
+                Box::new(number_node)
+            },
+            _ => {
+                panic!("Expected STRING or NUM but got {:?}", self.peek());
+            }
+        }
     }
 
     fn statement(&mut self) -> Box<dyn StatementNode> {
         if *self.peek() == Token::PRINT {
             self.next(); // Skip PRINT
+            self.expect(Token::LPAREN);
+
             let print_node = PrintNode {
-                expression: Box::new(self.expression()),
+                expression: self.expression(),
             };
+            self.next(); // Skip expression
+            self.expect(Token::RPAREN);
 
             Box::new(print_node)
         } else {

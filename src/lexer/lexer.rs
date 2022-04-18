@@ -53,6 +53,16 @@ impl Lexer {
         string
     }
 
+    fn get_number(&mut self) -> String {
+        let mut number = String::new();
+        while self.file_chars[self.current_idx].is_numeric() {
+            number.push(self.file_chars[self.current_idx]);
+            self.current_idx += 1;
+        }
+
+        number
+    }
+
     pub fn tokenize(&mut self, file_path: &str) -> Vec<Token> {
         self.file_chars = read_file_line_by_line(file_path).unwrap();
         let mut tokens = Vec::new();
@@ -77,6 +87,9 @@ impl Lexer {
                 '\"' | '\'' => {
                     self.current_idx += 1;
                     tokens.push(Token::STRING(self.get_string(self.file_chars[self.current_idx - 1])));
+                },
+                '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' => {
+                    tokens.push(Token::NUM(self.get_number()))
                 },
                 _ => {
                     panic!("Illegal token {}", self.file_chars[self.current_idx]);
