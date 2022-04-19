@@ -80,8 +80,7 @@ impl Parser {
             Token::VAR => {
                 self.next(); // Skip VAR
 
-                let identifier = self.expression();
-                self.next(); // Skip identifier
+                let identifier = self.next().value();
                 self.expect(Token::ASSIGN);
 
                 let var_node = VarNode {

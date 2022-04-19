@@ -11,6 +11,6 @@ impl ExpressionNode for IdentifierNode {
     }
 
     fn compile_expression(&self, program_str: &mut String) {
-        program_str.push_str(&format!("&{}\n", self.name));
+        program_str.push_str(&format!("LOAD &{}\n", self.name));
     }
 }
