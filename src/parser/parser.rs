@@ -64,7 +64,7 @@ impl Parser {
     }
 
     fn statement(&mut self) -> Box<dyn StatementNode> {
-        match *self.peek() {
+        match &*self.peek() {
             Token::PRINT => {
                 self.next(); // Skip PRINT
                 self.expect(Token::LPAREN);
@@ -90,7 +90,20 @@ impl Parser {
                 self.next(); // Skip expression
 
                 Box::new(var_node)
-            }
+            },
+            Token::IDENTIFIER(ident) => {
+                let identifier = ident.clone();
+                self.next(); // Skip IDENTIFIER
+                self.expect(Token::ASSIGN);
+
+                let identifier_node =  VarNode {
+                    identifier: identifier,
+                    expression: self.expression(),
+                };
+                self.next(); // Skip expression
+
+                Box::new(identifier_node)
+            },
             _ => {
                 panic!("Unexpected token {:?}", self.peek());
             }
