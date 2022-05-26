@@ -110,6 +110,22 @@ impl Lexer {
                     self.current_idx += 1;
                     tokens.push(Token::ASSIGN);
                 },
+                '+' => {
+                    self.current_idx += 1;
+                    tokens.push(Token::PLUS);
+                },
+                '-' => {
+                    self.current_idx += 1;
+                    tokens.push(Token::MINUS);
+                },
+                '*' => {
+                    self.current_idx += 1;
+                    tokens.push(Token::STAR);
+                },
+                '/' => {
+                    self.current_idx += 1;
+                    tokens.push(Token::SLASH);
+                },
                 '\"' | '\'' => {
                     self.current_idx += 1;
                     tokens.push(Token::STRING(self.get_string(self.file_chars[self.current_idx - 1])));

@@ -1,7 +1,6 @@
-use crate::node::ExpressionNode;
 use crate::token::Token;
 use crate::node::{Node, ProgramNode, StatementNode, PrintNode, StringNode, NumberNode, VarNode};
-use crate::node::{IdentifierNode};
+use crate::node::{IdentifierNode, ExpressionNode, BinaryOpNode};
 
 pub struct Parser {
     tokens: Vec<Token>,
@@ -37,7 +36,7 @@ impl Parser {
         self.next();
     }
 
-    fn expression(&mut self) -> Box<dyn ExpressionNode> {
+    fn term(&mut self) -> Box<dyn ExpressionNode> {
         match *self.peek() {
             Token::STRING(ref s) => {
                 let string_node = StringNode {
@@ -61,6 +60,40 @@ impl Parser {
                 panic!("Expected STRING or NUM but got {:?}", self.peek());
             }
         }
+    }
+
+    fn mul(&mut self) -> Box<dyn ExpressionNode> {
+        let mut node = self.term();
+        while self.peek() == &Token::STAR || self.peek() == &Token::SLASH {
+            let op = self.next();
+            let right = self.term();
+            node = Box::new(BinaryOpNode {
+                left: node,
+                right: right,
+                op: op.value(),
+            });
+        }
+
+        node
+    }
+
+    fn sum(&mut self) -> Box<dyn ExpressionNode> {
+        let mut node = self.mul();
+        while self.peek() == &Token::PLUS || self.peek() == &Token::MINUS {
+            let op = self.next();
+            let right = self.mul();
+            node = Box::new(BinaryOpNode {
+                left: node,
+                right: right,
+                op: op.value(),
+            });
+        }
+
+        node
+    }
+
+    fn expression(&mut self) -> Box<dyn ExpressionNode> {
+        self.sum()
     }
 
     fn statement(&mut self) -> Box<dyn StatementNode> {

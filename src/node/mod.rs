@@ -7,6 +7,7 @@ pub(self) mod string_node;
 pub(self) mod number_node;
 pub(self) mod var_node;
 pub(self) mod identifier_node;
+pub(self) mod bin_op_node;
 
 pub use node::Node;
 pub(super) use program_node::ProgramNode;
@@ -17,3 +18,4 @@ pub(super) use string_node::StringNode;
 pub(super) use number_node::NumberNode;
 pub(super) use var_node::VarNode;
 pub(super) use identifier_node::IdentifierNode;
+pub(super) use bin_op_node::BinaryOpNode;
